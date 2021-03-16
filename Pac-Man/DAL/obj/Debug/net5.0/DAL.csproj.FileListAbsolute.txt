@@ -1,0 +1,15 @@
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\bin\Debug\net5.0\DAL.deps.json
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\bin\Debug\net5.0\DAL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\bin\Debug\net5.0\ref\DAL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\bin\Debug\net5.0\DAL.pdb
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.csprojAssemblyReference.cache
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.AssemblyInfoInputs.cache
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.AssemblyInfo.cs
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.csproj.CoreCompileInputs.cache
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\ref\DAL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.pdb
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\bin\Debug\net5.0\Core.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\bin\Debug\net5.0\Core.pdb
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\DAL\obj\Debug\net5.0\DAL.csproj.CopyComplete

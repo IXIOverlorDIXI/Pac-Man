@@ -1,0 +1,17 @@
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\BLL.deps.json
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\BLL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\ref\BLL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\BLL.pdb
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\DAL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\DAL.pdb
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.csprojAssemblyReference.cache
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.AssemblyInfoInputs.cache
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.AssemblyInfo.cs
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.csproj.CoreCompileInputs.cache
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.csproj.CopyComplete
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\ref\BLL.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\obj\Debug\net5.0\BLL.pdb
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\Core.dll
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\BLL\bin\Debug\net5.0\Core.pdb
