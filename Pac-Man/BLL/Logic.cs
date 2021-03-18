@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Core;
 using DAL;
 
@@ -15,24 +14,20 @@ namespace BLL
 
         public Pac_Man Player = new Pac_Man();
         
-        
         public Field Level { get; set; }
-
-
+        
         public void Move()
         {
-            if(GameStatus!="Dead")PlayerMoving();
-            if(Ghosts.Count!=0&&GameStatus!="Dead")GhostMoving();
+            if(GameStatus!="GameEnd")PlayerMoving();
+            if(Ghosts.Count!=0&&GameStatus!="GameEnd")GhostMoving();
         }
-
-
-
+        
         private void GhostMoving()
         {
             Random random = new Random();
             for (int count = 0; count < Ghosts.Count; count++)
             {
-                if (EntityCanNotMove(Ghosts[count])||random.Next(1, 10) == 1)
+                if (EntityCanNotMove(Ghosts[count])||random.Next(1, 11) == 1)
                 {
                     bool U = false, D = false, R = false, L = false;
                     byte direct = 0;
@@ -62,7 +57,7 @@ namespace BLL
 
                     if (direct != 0)
                     {
-                        int chose = random.Next(1, direct);
+                        int chose = random.Next(1, direct+1);
                         int ccount = 0;
                         if (U)
                         {
@@ -91,6 +86,27 @@ namespace BLL
                 {
                     MoveByDirection(count,Ghosts[count]);
                 }
+
+                if (Level._playerfield[Ghosts[count].YPosition, Ghosts[count].XPosition] == 'o')
+                {
+                    if (Player.Status)
+                    {
+                        Ghosts.RemoveAt(SearchGhost(Ghosts[count].XPosition, Ghosts[count].YPosition));
+                        Level._ghostfield[Ghosts[count].YPosition, Ghosts[count].XPosition] = ' ';
+                        Player.Score += 200;
+
+                    }
+                    else
+                    {
+                        Player.Life--;
+                        /*if(Player.Life == 0 )*/
+                        GameStatus = "GameEnd";
+                        //else
+                        {
+
+                        }
+                    }
+                }
             }
         }
 
@@ -112,26 +128,30 @@ namespace BLL
                         Ghosts.RemoveAt(SearchGhost(Player.XPosition, Player.YPosition));
                         Level._ghostfield[Player.YPosition, Player.XPosition] = ' ';
                         Player.Score += 200;
-                        Player.TimeToRush--;
-                        if (Player.TimeToRush == 0) Player.Status = false;
+                        
                     }
                     else
                     {
                         Player.Life--;
-                        /*if (Player.Life == 0)*/ GameStatus = "Dead";
+                        /*if(Player.Life == 0 )*/ GameStatus = "GameEnd";
+                        //else
+                        {
+                            
+                        }
                     }
                 } 
-                else if (Level._pointfield[Player.YPosition, Player.XPosition] == '@')
+                if (Level._pointfield[Player.YPosition, Player.XPosition] == '@')
                 {
                     Level._pointfield[Player.YPosition, Player.XPosition] = ' ';
                     Player.Score += 50;
                     Player.Status = true;
                     Player.TimeToRush = 20;
                 }
+                Player.TimeToRush--;
+                if (Player.TimeToRush == 0) Player.Status = false;
             }
         }
-
-
+        
         private void MoveByDirection(int count,Ghost entity)
         {
             int x = entity.XPosition;

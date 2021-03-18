@@ -9,6 +9,34 @@ namespace Pac_Man
         private Logic _bll = new Logic();
 
         private char[,] level { get; set; }
+        
+        private string _gameover1 = string.Concat(
+            "\n\n╔═══╦══╦╗──╔╦═══╗╔══╦╗╔╦═══╦═══╗\n",
+            "║╔══╣╔╗║║──║║╔══╝║╔╗║║║║╔══╣╔═╗║\n",
+            "║║╔═╣╚╝║╚╗╔╝║╚══╗║║║║║║║╚══╣╚═╝║\n",
+            "║║╚╗║╔╗║╔╗╔╗║╔══╝║║║║╚╝║╔══╣╔╗╔╝\n",
+            "║╚═╝║║║║║╚╝║║╚══╗║╚╝╠╗╔╣╚══╣║║║\n",
+            "╚═══╩╝╚╩╝──╚╩═══╝╚══╝╚╝╚═══╩╝╚╝");
+        
+        private string _gameover = string.Concat(
+            "\n\n╔╗╔╦══╦╗╔╗╔══╦═══╦═══╗╔══╗╔═══╦══╦══╗\n",
+            "║║║║╔╗║║║║║╔╗║╔═╗║╔══╝║╔╗╚╣╔══╣╔╗║╔╗╚╗\n",
+            "║╚╝║║║║║║║║╚╝║╚═╝║╚══╗║║╚╗║╚══╣╚╝║║╚╗║\n",
+            "╚═╗║║║║║║║║╔╗║╔╗╔╣╔══╝║║─║║╔══╣╔╗║║─║║\n",
+            "─╔╝║╚╝║╚╝║║║║║║║║║╚══╗║╚═╝║╚══╣║║║╚═╝║\n",
+            "─╚═╩══╩══╝╚╝╚╩╝╚╝╚═══╝╚═══╩═══╩╝╚╩═══╝");
+            
+            
+            
+            
+            
+           
+            
+            
+            
+            
+            
+            
 
 
         public Application()
@@ -20,33 +48,64 @@ namespace Pac_Man
         
         public void Run()
         {
-            do {
+            do
+            {
                 Demo();
                 Control();
-            } while (_bll.GameStatus != "Dead");
+            } while (_bll.GameStatus != "GameEnd");
             
             Console.Clear();
-            Console.WriteLine(string.Concat(
-                "\n\n╔═══╦══╦╗──╔╦═══╗╔══╦╗╔╦═══╦═══╗\n",
-                "║╔══╣╔╗║║──║║╔══╝║╔╗║║║║╔══╣╔═╗║\n",
-                "║║╔═╣╚╝║╚╗╔╝║╚══╗║║║║║║║╚══╣╚═╝║\n",
-                "║║╚╗║╔╗║╔╗╔╗║╔══╝║║║║╚╝║╔══╣╔╗╔╝\n",
-                "║╚═╝║║║║║╚╝║║╚══╗║╚╝╠╗╔╣╚══╣║║║\n",
-                "╚═══╩╝╚╩╝──╚╩═══╝╚══╝╚╝╚═══╩╝╚╝"));
+            Console.WriteLine(_gameover);
+            //Console.WriteLine(_gameover1);
+            Console.ReadKey();
+            // Random a = new Random();
+            // for (int i = 0; i < 100; i++)
+            // {
+            //     Console.WriteLine(a.Next(1,2));
+            // }
         }
 
         private void Demo()
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.White;
             // add collor
             Console.WriteLine($"Score: {_bll.Player.Score}");
             Console.WriteLine($"Life: {_bll.Player.Life}");
+            //Console.WriteLine($"Status: {_bll.Player.Status}");
+            if(_bll.Player.Status) Console.WriteLine($"TimeLeft: {_bll.Player.TimeToRush}");
+            else Console.WriteLine();
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
             level = _bll.Complex();
             for (int i = 0; i < level.GetLength(0); i++)
             {
                 Console.WriteLine("\t");
                 for (int j = 0; j < level.GetLength(1); j++)
                 {
+                    switch (level[i, j])
+                    {
+                        case '.':
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            break;
+                        case '@':
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            break;
+                        case 'o':
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            break;
+                        case 'A':
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            break;
+                        case 'V':
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            break;
+                        case '#':
+                            Console.ForegroundColor = ConsoleColor.White;
+                            break;
+                    }
                     Console.Write($"{level[i,j]} ");
                 }
             }
