@@ -8,7 +8,11 @@ namespace DAL
         private string _path { get; set; }
 
         private string sequritypath = ".\\Levels\\Level0.txt";
-        public char[,] _field { get; set; }
+        public char[,] _wallfield { get; set; }
+        
+        public char[,] _ghostfield { get; set; }
+        
+        public char[,] _playerfield { get; set; }
         
         public char[,] _pointfield { get; set; }
         
@@ -43,8 +47,10 @@ namespace DAL
                 LifeCount = Byte.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
 
-                _field = new char[h, w];
+                _wallfield = new char[h, w];
                 _pointfield = new char[h, w];
+                _playerfield = new char[h, w];
+                _ghostfield = new char[h, w];
                 
                 for (int i = 0; i < h; i++)
                 {
@@ -53,15 +59,39 @@ namespace DAL
                     {
                         if (line[jj] != ' ')
                         {
-                            if (line[jj] != '.')
+                            switch (line[jj])
                             {
-                                _field[i, j] = line[jj];
-                                _pointfield[i, j] = ' ';
-                            }
-                            else
-                            {
-                                _field[i, j] = ' ';
-                                _pointfield[i, j] = line[jj];
+
+                                case '.':
+                                    _pointfield[i, j] = line[jj];
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case '@':
+                                    _pointfield[i, j] = line[jj];
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case '#':
+                                    _pointfield[i, j] = ' ';
+                                    _wallfield[i, j] = line[jj];
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case 'A':
+                                    _pointfield[i, j] = ' ';
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = line[jj];
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case 'o':
+                                    _pointfield[i, j] = ' ';
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = line[jj];
+                                    break;
                             }
                             j++;
                         }
@@ -72,7 +102,7 @@ namespace DAL
             catch (Exception e)
             {
                 _path = sequritypath;
-                var FileWithLevel = new StreamReader(_path);
+                                var FileWithLevel = new StreamReader(_path);
                 h = int.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
                 w = int.Parse(FileWithLevel.ReadLine());
@@ -80,8 +110,10 @@ namespace DAL
                 LifeCount = Byte.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
 
-                _field = new char[h, w];
+                _wallfield = new char[h, w];
                 _pointfield = new char[h, w];
+                _playerfield = new char[h, w];
+                _ghostfield = new char[h, w];
                 
                 for (int i = 0; i < h; i++)
                 {
@@ -90,15 +122,39 @@ namespace DAL
                     {
                         if (line[jj] != ' ')
                         {
-                            if (line[jj] != '.')
+                            switch (line[jj])
                             {
-                                _field[i, j] = line[jj];
-                                _pointfield[i, j] = ' ';
-                            }
-                            else
-                            {
-                                _field[i, j] = ' ';
-                                _pointfield[i, j] = line[jj];
+
+                                case '.':
+                                    _pointfield[i, j] = line[jj];
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case '@':
+                                    _pointfield[i, j] = line[jj];
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case '#':
+                                    _pointfield[i, j] = ' ';
+                                    _wallfield[i, j] = line[jj];
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case 'A':
+                                    _pointfield[i, j] = ' ';
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = line[jj];
+                                    _playerfield[i, j] = ' ';
+                                    break;
+                                case 'o':
+                                    _pointfield[i, j] = ' ';
+                                    _wallfield[i, j] = ' ';
+                                    _ghostfield[i, j] = ' ';
+                                    _playerfield[i, j] = line[jj];
+                                    break;
                             }
                             j++;
                         }

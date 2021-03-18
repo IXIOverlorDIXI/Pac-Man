@@ -11,6 +11,7 @@
         {
             XPosition = x;
             YPosition = y;
+            //Direct = ' ';
         }
     }
 }

@@ -22,7 +22,7 @@ namespace BLL
         public void Move()
         {
             if(GameStatus!="Dead")PlayerMoving();
-            if(GameStatus!="Dead")GhostMoving();
+            if(Ghosts.Count!=0&&GameStatus!="Dead")GhostMoving();
         }
 
 
@@ -32,31 +32,31 @@ namespace BLL
             Random random = new Random();
             for (int count = 0; count < Ghosts.Count; count++)
             {
-                if (random.Next(1, 10) == 1||Ghosts[count].Direct==null||EntityCanNotMove(Ghosts[count]))
+                if (EntityCanNotMove(Ghosts[count])||random.Next(1, 10) == 1)
                 {
                     bool U = false, D = false, R = false, L = false;
                     byte direct = 0;
-                    if (IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition - 1))
+                    if (!IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition - 1))
                     {
-                        U = !U;
+                        U = true;
                         direct++;
                     }
 
-                    if (IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition + 1))
+                    if (!IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition + 1))
                     {
-                        D = !D;
+                        D = true;
                         direct++;
                     }
 
-                    if (IsWall(Ghosts[count].XPosition - 1, Ghosts[count].YPosition))
+                    if (!IsWall(Ghosts[count].XPosition - 1, Ghosts[count].YPosition))
                     {
-                        L = !L;
+                        L = true;
                         direct++;
                     }
 
-                    if (IsWall(Ghosts[count].XPosition + 1, Ghosts[count].YPosition))
+                    if (!IsWall(Ghosts[count].XPosition + 1, Ghosts[count].YPosition))
                     {
-                        R = !R;
+                        R = true;
                         direct++;
                     }
 
@@ -84,12 +84,12 @@ namespace BLL
                             ccount++;
                             if (ccount == chose) Ghosts[count].Direct = 'L';
                         }
-                        MoveByDirection(Ghosts[count]);
+                        MoveByDirection(count,Ghosts[count]);
                     }
                 }
                 else
                 {
-                    MoveByDirection(Ghosts[count]);
+                    MoveByDirection(count,Ghosts[count]);
                 }
             }
         }
@@ -105,22 +105,25 @@ namespace BLL
                     Player.Score+=10;
                     Level._pointfield[Player.YPosition, Player.XPosition] = ' ';
                 }
-                if (IsGhost(Player.YPosition, Player.XPosition))
+                if (IsGhost(Player.XPosition, Player.YPosition))
                 {
                     if (Player.Status)
                     {
                         Ghosts.RemoveAt(SearchGhost(Player.XPosition, Player.YPosition));
+                        Level._ghostfield[Player.YPosition, Player.XPosition] = ' ';
                         Player.Score += 200;
                         Player.TimeToRush--;
+                        if (Player.TimeToRush == 0) Player.Status = false;
                     }
                     else
                     {
                         Player.Life--;
-                        if (Player.Life == 0) GameStatus = "Dead";
+                        /*if (Player.Life == 0)*/ GameStatus = "Dead";
                     }
                 } 
-                else if (Level._field[Player.YPosition, Player.XPosition] == '@')
+                else if (Level._pointfield[Player.YPosition, Player.XPosition] == '@')
                 {
+                    Level._pointfield[Player.YPosition, Player.XPosition] = ' ';
                     Player.Score += 50;
                     Player.Status = true;
                     Player.TimeToRush = 20;
@@ -129,84 +132,57 @@ namespace BLL
         }
 
 
-        private void MoveByDirection(Ghost entity)
+        private void MoveByDirection(int count,Ghost entity)
         {
-            if (entity.Direct == 'U')
+            int x = entity.XPosition;
+            int y = entity.YPosition;
+            switch (entity.Direct)
             {
-                Level._field[entity.YPosition-1, entity.XPosition] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.YPosition--;
+                case 'R':
+                    x++;
+                    break;
+                case 'L':
+                    x--;
+                    break;
+                case 'D':
+                    y++;
+                    break;
+                case 'U':
+                    y--;
+                    break;
             }
-            if (entity.Direct == 'R')
-            {
-                Level._field[entity.YPosition, entity.XPosition+1] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.XPosition++;
-            }
-            if (entity.Direct == 'D')
-            {
-                Level._field[entity.YPosition-1, entity.XPosition] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.YPosition++;
-            }
-            if (entity.Direct == 'L')
-            {
-                Level._field[entity.YPosition, entity.XPosition] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.XPosition--;
-            }
+            if(Player.Status)Level._ghostfield[y, x] = 'V';
+            else Level._ghostfield[y, x] = 'A';
+            Level._ghostfield[entity.YPosition, entity.XPosition] = ' ';
+            Ghosts[count].XPosition = x;
+            Ghosts[count].YPosition = y;
         }
+        
         private void MoveByDirection(Pac_Man entity)
         {
-            if (entity.Direct == 'U')
+            int x = entity.XPosition;
+            int y = entity.YPosition;
+            switch (entity.Direct)
             {
-                Level._field[entity.YPosition-1, entity.XPosition] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.YPosition--;
+                case 'R':
+                    x++;
+                    break;
+                case 'L':
+                    x--;
+                    break;
+                case 'D':
+                    y++;
+                    break;
+                case 'U':
+                    y--;
+                    break;
             }
-            if (entity.Direct == 'R')
-            {
-                Level._field[entity.YPosition, entity.XPosition+1] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.XPosition++;
-            }
-            if (entity.Direct == 'D')
-            {
-                Level._field[entity.YPosition-1, entity.XPosition] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.YPosition++;
-            }
-            if (entity.Direct == 'L')
-            {
-                Level._field[entity.YPosition, entity.XPosition] = 
-                    Level._field[entity.YPosition, entity.XPosition];
-                        
-                Level._field[entity.YPosition, entity.XPosition] = ' ';
-
-                entity.XPosition--;
-            }
+            Level._playerfield[y, x] = 'o';
+            Level._playerfield[entity.YPosition, entity.XPosition] = ' ';
+            Player.XPosition = x;
+            Player.YPosition = y;
         }
+        
         private bool EntityCanNotMove(Ghost entity)
         {
             if (entity.Direct == 'U')
@@ -219,7 +195,7 @@ namespace BLL
             }
             if (entity.Direct == 'D')
             {
-                IsWall(entity.XPosition, entity.YPosition + 1);
+                return IsWall(entity.XPosition, entity.YPosition + 1);
             }
             if (entity.Direct == 'L')
             {
@@ -227,6 +203,7 @@ namespace BLL
             }
             return true;
         }
+        
         private bool EntityCanNotMove(Pac_Man entity)
         {
             if (entity.Direct == 'U')
@@ -239,7 +216,7 @@ namespace BLL
             }
             if (entity.Direct == 'D')
             {
-                IsWall(entity.XPosition, entity.YPosition + 1);
+                return IsWall(entity.XPosition, entity.YPosition + 1);
             }
             if (entity.Direct == 'L')
             {
@@ -253,16 +230,17 @@ namespace BLL
             _dal.LoadField(number);
             Level = _dal.level;
             Ghosts = new List<Ghost>();
+            Player.Life = Level.LifeCount;
+            Player.Status = false;
             Player.Score = 0;
             GameStatus = "InGame";
-            Player.Status = false;
-            Player.Life = Level.LifeCount;
             int count = 0;
-            for (int i = 0; i < Level._field.GetLength(0); i++)
+            char[,] full = Complex();
+            for (int i = 0; i < full.GetLength(0); i++)
             {
-                for (int j = 0; j < Level._field.GetLength(1); j++)
+                for (int j = 0; j < full.GetLength(1); j++)
                 {
-                    switch (Level._field[i,j])
+                    switch (full[i,j])
                     {
                         case 'o':
                             Player.XPosition = j;
@@ -274,9 +252,6 @@ namespace BLL
                     }
                 }
             }
-
-            Player.Life = Level.LifeCount;
-            Player.Status = false;
         }
         
         public void ToLeft()
@@ -310,39 +285,51 @@ namespace BLL
         
         private bool IsWall(int x, int y)
         {
-            return Level._field[y, x] == '#';
+            return Level._wallfield[y, x] == '#';
         }
         private bool IsGhost(int x, int y)
         {
-            return Level._field[y, x] == 'A'|| Level._field[y, x] == 'V';
-        }
-        private bool IsPacMan(int x, int y)
-        {
-            return Level._field[y, x] == 'o';
+            return Level._ghostfield[y, x] == 'A'|| Level._ghostfield[y, x] == 'V';
         }
         public char[,] Complex()
         {
-            char[,] Full = new char[Level._field.GetLength(0), Level._field.GetLength(1)];
+            char[,] Full = new char[Level._wallfield.GetLength(0), Level._wallfield.GetLength(1)];
             
-            for (int i = 0; i < Level._field.GetLength(0); i++)
+            for (int i = 0; i < Level._wallfield.GetLength(0); i++)
             {
-                for (int j = 0, jj = 0; jj < Level._field.GetLength(1); jj++)
+                for (int j = 0, jj = 0; jj < Level._wallfield.GetLength(1); jj++)
                 {
-                    if (Level._field[i,j] == ' ')
+                    if (Level._wallfield[i,j] == ' ')
                     {
-                        if (Level._pointfield[i,j] != '.')
+                        if (Level._playerfield[i,j] == ' ')
                         {
-                            Full[i, j] = ' ';
+                            if (Level._ghostfield[i,j] == ' ')
+                            {
+                                if (Level._pointfield[i,j] == ' ')
+                                {
+                                    Full[i, j] = ' ';
+                                }
+                                else
+                                {
+                                    Full[i, j] = Level._pointfield[i,j];
+                                }
+                            }
+                            else
+                            {
+                                if (Player.Status) Full[i, j] = 'V';
+                                else Full[i, j] = 'A';
+                            }
+                            
                         }
                         else
                         {
-                            Full[i, j] = '.';
+                            Full[i, j] = Level._playerfield[i,j];
                         }
                         
                     }
                     else
                     {
-                        Full[i, j] = Level._field[i,j]; 
+                        Full[i, j] = Level._wallfield[i,j]; 
                     }
                     j++;
                 }

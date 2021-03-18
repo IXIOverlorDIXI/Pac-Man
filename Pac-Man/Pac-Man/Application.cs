@@ -13,19 +13,26 @@ namespace Pac_Man
 
         public Application()
         {
-            _bll.LoadLevel(1);//Int32.Parse(Console.ReadLine()));
+            _bll.LoadLevel(Int32.Parse(Console.ReadLine()));
             
             Run();
         }
         
         public void Run()
         {
-            while (_bll.GameStatus != "Dead")
-            { 
+            do {
                 Demo();
                 Control();
-            }
-
+            } while (_bll.GameStatus != "Dead");
+            
+            Console.Clear();
+            Console.WriteLine(string.Concat(
+                "\n\n╔═══╦══╦╗──╔╦═══╗╔══╦╗╔╦═══╦═══╗\n",
+                "║╔══╣╔╗║║──║║╔══╝║╔╗║║║║╔══╣╔═╗║\n",
+                "║║╔═╣╚╝║╚╗╔╝║╚══╗║║║║║║║╚══╣╚═╝║\n",
+                "║║╚╗║╔╗║╔╗╔╗║╔══╝║║║║╚╝║╔══╣╔╗╔╝\n",
+                "║╚═╝║║║║║╚╝║║╚══╗║╚╝╠╗╔╣╚══╣║║║\n",
+                "╚═══╩╝╚╩╝──╚╩═══╝╚══╝╚╝╚═══╩╝╚╝"));
         }
 
         private void Demo()
