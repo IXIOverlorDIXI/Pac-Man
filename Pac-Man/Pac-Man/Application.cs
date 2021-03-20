@@ -10,39 +10,27 @@ namespace Pac_Man
 
         private char[,] level { get; set; }
         
-        private string _gameover1 = string.Concat(
-            "\n\n╔═══╦══╦╗──╔╦═══╗╔══╦╗╔╦═══╦═══╗\n",
-            "║╔══╣╔╗║║──║║╔══╝║╔╗║║║║╔══╣╔═╗║\n",
-            "║║╔═╣╚╝║╚╗╔╝║╚══╗║║║║║║║╚══╣╚═╝║\n",
-            "║║╚╗║╔╗║╔╗╔╗║╔══╝║║║║╚╝║╔══╣╔╗╔╝\n",
-            "║╚═╝║║║║║╚╝║║╚══╗║╚╝╠╗╔╣╚══╣║║║\n",
-            "╚═══╩╝╚╩╝──╚╩═══╝╚══╝╚╝╚═══╩╝╚╝");
-        
         private string _gameover = string.Concat(
-            "\n\n╔╗╔╦══╦╗╔╗╔══╦═══╦═══╗╔══╗╔═══╦══╦══╗\n",
-            "║║║║╔╗║║║║║╔╗║╔═╗║╔══╝║╔╗╚╣╔══╣╔╗║╔╗╚╗\n",
-            "║╚╝║║║║║║║║╚╝║╚═╝║╚══╗║║╚╗║╚══╣╚╝║║╚╗║\n",
-            "╚═╗║║║║║║║║╔╗║╔╗╔╣╔══╝║║─║║╔══╣╔╗║║─║║\n",
-            "─╔╝║╚╝║╚╝║║║║║║║║║╚══╗║╚═╝║╚══╣║║║╚═╝║\n",
-            "─╚═╩══╩══╝╚╝╚╩╝╚╝╚═══╝╚═══╩═══╩╝╚╩═══╝");
-            
-            
-            
-            
-            
-           
-            
-            
-            
-            
-            
-            
-
-
+            "\n\n██████████████████████████████████████████████\n",
+            "█────██────██─███──█───██────██─█─██───██────█\n",
+            "█─█████─██─██──█───█─████─██─██─█─██─████─██─█\n",
+            "█─█──██────██─█─█──█───██─██─██─█─██───██────█\n",
+            "█─██─██─██─██─███──█─████─██─██───██─████─█─██\n",
+            "█────██─██─██─███──█───██────███─███───██─█─██\n",
+            "██████████████████████████████████████████████");
+        
+        private string _win = string.Concat(
+            "\n\n██████████████████████████████████████████████████████████████████████\n",
+            "█──█──██────██─█─██────██────██───██─███─██───██─██─██─██─██───██────█\n",
+            "██───███─██─██─█─██─██─██─██─██─████─███─███─███──█─██──█─██─████─██─█\n",
+            "███─████─██─██─█─██────██────██───██─█─█─███─███─█──██─█──██───██────█\n",
+            "███─████─██─██─█─██─██─██─█─███─████─────███─███─██─██─██─██─████─█─██\n",
+            "███─████────██───██─██─██─█─███───███─█─███───██─██─██─██─██───██─█─██\n",
+            "███─██████████████████████████████████████████████████████████████████");
+        
         public Application()
         {
             _bll.LoadLevel(Int32.Parse(Console.ReadLine()));
-            
             Run();
         }
         
@@ -51,18 +39,18 @@ namespace Pac_Man
             do
             {
                 Demo();
-                Control();
-            } while (_bll.GameStatus != "GameEnd");
+                Thread.Sleep(500);
+                Thread t = new Thread(Control);
+                t.Start();
+                _bll.Move();
+
+            } 
+            while (_bll.GameStatus != "GameEnd");
             
             Console.Clear();
-            Console.WriteLine(_gameover);
-            //Console.WriteLine(_gameover1);
+            if(_bll.Player.Life<=0)Console.WriteLine(_gameover);
+            else Console.WriteLine(_win);
             Console.ReadKey();
-            // Random a = new Random();
-            // for (int i = 0; i < 100; i++)
-            // {
-            //     Console.WriteLine(a.Next(1,2));
-            // }
         }
 
         private void Demo()
@@ -70,10 +58,10 @@ namespace Pac_Man
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Black;
             Console.BackgroundColor = ConsoleColor.White;
-            // add collor
+
             Console.WriteLine($"Score: {_bll.Player.Score}");
             Console.WriteLine($"Life: {_bll.Player.Life}");
-            //Console.WriteLine($"Status: {_bll.Player.Status}");
+  
             if(_bll.Player.Status) Console.WriteLine($"TimeLeft: {_bll.Player.TimeToRush}");
             else Console.WriteLine();
             

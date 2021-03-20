@@ -87,13 +87,18 @@ namespace BLL
                     MoveByDirection(count,Ghosts[count]);
                 }
 
-                if (Level._playerfield[Ghosts[count].YPosition, Ghosts[count].XPosition] == 'o')
+                if (Player.XPosition==Ghosts[count].XPosition&&Player.YPosition==Ghosts[count].YPosition)
                 {
                     if (Player.Status)
                     {
-                        Ghosts.RemoveAt(SearchGhost(Ghosts[count].XPosition, Ghosts[count].YPosition));
-                        Level._ghostfield[Ghosts[count].YPosition, Ghosts[count].XPosition] = ' ';
-                        Player.Score += 200;
+                        List<int> indexes = SearchGhost(Player.XPosition, Player.YPosition);
+                        indexes.Reverse();
+                        foreach (var index in indexes)
+                        {
+                            Ghosts.RemoveAt(index);
+                            Player.Score += 200;
+                        }
+                        
 
                     }
                     else
@@ -109,26 +114,28 @@ namespace BLL
                 }
             }
         }
-
-
+        
         private void PlayerMoving()
         {
             if (!EntityCanNotMove(Player))
             {
                 MoveByDirection(Player);
-                if (Level._pointfield[Player.YPosition, Player.XPosition] == '.')
+                if (Level._field[Player.YPosition, Player.XPosition].TypeOfCell == '.')
                 {
                     Player.Score+=10;
-                    Level._pointfield[Player.YPosition, Player.XPosition] = ' ';
+                    Level._field[Player.YPosition, Player.XPosition].TypeOfCell = ' ';
                 }
                 if (IsGhost(Player.XPosition, Player.YPosition))
                 {
                     if (Player.Status)
                     {
-                        Ghosts.RemoveAt(SearchGhost(Player.XPosition, Player.YPosition));
-                        Level._ghostfield[Player.YPosition, Player.XPosition] = ' ';
-                        Player.Score += 200;
-                        
+                        List<int> indexes = SearchGhost(Player.XPosition, Player.YPosition);
+                        indexes.Reverse();
+                        foreach (var index in indexes)
+                        {
+                            Ghosts.RemoveAt(index);
+                            Player.Score += 200;
+                        }
                     }
                     else
                     {
@@ -140,15 +147,15 @@ namespace BLL
                         }
                     }
                 } 
-                if (Level._pointfield[Player.YPosition, Player.XPosition] == '@')
+                if (Level._field[Player.YPosition, Player.XPosition].TypeOfCell == '@' && GameStatus != "GameEnd")
                 {
-                    Level._pointfield[Player.YPosition, Player.XPosition] = ' ';
+                    Level._field[Player.YPosition, Player.XPosition].TypeOfCell = ' ';
                     Player.Score += 50;
                     Player.Status = true;
                     Player.TimeToRush = 20;
                 }
                 Player.TimeToRush--;
-                if (Player.TimeToRush == 0) Player.Status = false;
+                if (Player.TimeToRush == 0 && GameStatus != "GameEnd") Player.Status = false;
             }
         }
         
@@ -171,9 +178,6 @@ namespace BLL
                     y--;
                     break;
             }
-            if(Player.Status)Level._ghostfield[y, x] = 'V';
-            else Level._ghostfield[y, x] = 'A';
-            Level._ghostfield[entity.YPosition, entity.XPosition] = ' ';
             Ghosts[count].XPosition = x;
             Ghosts[count].YPosition = y;
         }
@@ -197,8 +201,6 @@ namespace BLL
                     y--;
                     break;
             }
-            Level._playerfield[y, x] = 'o';
-            Level._playerfield[entity.YPosition, entity.XPosition] = ' ';
             Player.XPosition = x;
             Player.YPosition = y;
         }
@@ -255,19 +257,22 @@ namespace BLL
             Player.Score = 0;
             GameStatus = "InGame";
             int count = 0;
-            char[,] full = Complex();
-            for (int i = 0; i < full.GetLength(0); i++)
+            for (int i = 0; i < Level._field.GetLength(0); i++)
             {
-                for (int j = 0; j < full.GetLength(1); j++)
+                for (int j = 0; j < Level._field.GetLength(1); j++)
                 {
-                    switch (full[i,j])
+                    switch (Level._field[i,j].TypeOfCell)
                     {
                         case 'o':
                             Player.XPosition = j;
                             Player.YPosition = i;
+                            Player.XSpawnPosition = j;
+                            Player.YSpawnPosition = i;
+                            Level._field[i, j].TypeOfCell = ' ';
                             break;
                         case 'A':
                             Ghosts.Add(new Ghost(j, i));
+                            Level._field[i, j].TypeOfCell = ' ';
                             break;
                     }
                 }
@@ -277,25 +282,21 @@ namespace BLL
         public void ToLeft()
         {
             Player.Direct = 'L';
-            Move();
         }
         
         public void ToDown()
         {
             Player.Direct = 'D';
-            Move();
         }
         
         public void ToUp()
         {
             Player.Direct = 'U';
-            Move();
         }
         
         public void ToRight()
         {
             Player.Direct = 'R';
-            Move();
         }
         
         public void Pause()
@@ -305,67 +306,45 @@ namespace BLL
         
         private bool IsWall(int x, int y)
         {
-            return Level._wallfield[y, x] == '#';
+            return Level._field[y, x].TypeOfCell == '#';
         }
         private bool IsGhost(int x, int y)
         {
-            return Level._ghostfield[y, x] == 'A'|| Level._ghostfield[y, x] == 'V';
+            foreach (var ghost in Ghosts)
+            {
+                if (ghost.XPosition == x && ghost.YPosition == y) return true;
+            }
+            return false;
         }
         public char[,] Complex()
         {
-            char[,] Full = new char[Level._wallfield.GetLength(0), Level._wallfield.GetLength(1)];
+            char[,] Map = new char[Level._field.GetLength(0), Level._field.GetLength(1)];
             
-            for (int i = 0; i < Level._wallfield.GetLength(0); i++)
+            for (int i = 0; i < Level._field.GetLength(0); i++)
             {
-                for (int j = 0, jj = 0; jj < Level._wallfield.GetLength(1); jj++)
+                for (int j = 0; j < Level._field.GetLength(1); j++)
                 {
-                    if (Level._wallfield[i,j] == ' ')
-                    {
-                        if (Level._playerfield[i,j] == ' ')
-                        {
-                            if (Level._ghostfield[i,j] == ' ')
-                            {
-                                if (Level._pointfield[i,j] == ' ')
-                                {
-                                    Full[i, j] = ' ';
-                                }
-                                else
-                                {
-                                    Full[i, j] = Level._pointfield[i,j];
-                                }
-                            }
-                            else
-                            {
-                                if (Player.Status) Full[i, j] = 'V';
-                                else Full[i, j] = 'A';
-                            }
-                            
-                        }
-                        else
-                        {
-                            Full[i, j] = Level._playerfield[i,j];
-                        }
-                        
-                    }
-                    else
-                    {
-                        Full[i, j] = Level._wallfield[i,j]; 
-                    }
-                    j++;
+                    Map[i, j] = Level._field[i, j].TypeOfCell;
                 }
             }
-
-            return Full;
+            foreach (var ghost in Ghosts)
+            {
+                if (Player.Status) Map[ghost.YPosition, ghost.XPosition] = 'V';
+                else Map[ghost.YPosition, ghost.XPosition] = 'A';
+            }
+            Map[Player.YPosition, Player.XPosition] = 'o';
+            return Map;
         }
-        private int SearchGhost(int x, int y)
+        
+        private List<int> SearchGhost(int x, int y)
         {
+            List<int> arr = new List<int>();
             for (int i = 0; i < Ghosts.Count; i++)
             {
                 if (Ghosts[i].XPosition == x && Ghosts[i].YPosition == y)
-                    return i;
+                    arr.Add(i);
             }
-
-            return -1;
+            return arr;
         }
     }
 }

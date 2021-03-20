@@ -8,13 +8,8 @@ namespace DAL
         private string _path { get; set; }
 
         private string sequritypath = ".\\Levels\\Level0.txt";
-        public char[,] _wallfield { get; set; }
-        
-        public char[,] _ghostfield { get; set; }
-        
-        public char[,] _playerfield { get; set; }
-        
-        public char[,] _pointfield { get; set; }
+
+        public FieldStruct [,] _field { get; set; }
         
         public byte LifeCount { get; set; }
         
@@ -36,65 +31,24 @@ namespace DAL
 
         private void ReadLevelFile()
         {
-            int h, w;
             try
             {
                 var FileWithLevel = new StreamReader(_path);
-                h = int.Parse(FileWithLevel.ReadLine());
+                int h = int.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
-                w = int.Parse(FileWithLevel.ReadLine());
+                int w = int.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
                 LifeCount = Byte.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
 
-                _wallfield = new char[h, w];
-                _pointfield = new char[h, w];
-                _playerfield = new char[h, w];
-                _ghostfield = new char[h, w];
-                
+                _field = new FieldStruct [h, w];
+
                 for (int i = 0; i < h; i++)
                 {
                     string line = FileWithLevel.ReadLine();
-                    for (int j = 0, jj = 0; jj < line.Length; jj++)
+                    for (int j = 0; j < w; j++)
                     {
-                        if (line[jj] != ' ')
-                        {
-                            switch (line[jj])
-                            {
-
-                                case '.':
-                                    _pointfield[i, j] = line[jj];
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case '@':
-                                    _pointfield[i, j] = line[jj];
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case '#':
-                                    _pointfield[i, j] = ' ';
-                                    _wallfield[i, j] = line[jj];
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case 'A':
-                                    _pointfield[i, j] = ' ';
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = line[jj];
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case 'o':
-                                    _pointfield[i, j] = ' ';
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = line[jj];
-                                    break;
-                            }
-                            j++;
-                        }
+                        _field[i, j].TypeOfCell = line[j];
                     }
                 }
                 FileWithLevel.Close();
@@ -102,61 +56,24 @@ namespace DAL
             catch (Exception e)
             {
                 _path = sequritypath;
-                                var FileWithLevel = new StreamReader(_path);
-                h = int.Parse(FileWithLevel.ReadLine());
+                var FileWithLevel = new StreamReader(_path);
+                int h = int.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
-                w = int.Parse(FileWithLevel.ReadLine());
+                int w = int.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
                 LifeCount = Byte.Parse(FileWithLevel.ReadLine());
                 FileWithLevel.ReadLine();
 
-                _wallfield = new char[h, w];
-                _pointfield = new char[h, w];
-                _playerfield = new char[h, w];
-                _ghostfield = new char[h, w];
-                
+                _field = new FieldStruct [h, w];
+
                 for (int i = 0; i < h; i++)
                 {
                     string line = FileWithLevel.ReadLine();
-                    for (int j = 0, jj = 0; jj < line.Length; jj++)
+                    for (int j = 0; j < w; j++)
                     {
-                        if (line[jj] != ' ')
+                        if (line[j] != ' ')
                         {
-                            switch (line[jj])
-                            {
-
-                                case '.':
-                                    _pointfield[i, j] = line[jj];
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case '@':
-                                    _pointfield[i, j] = line[jj];
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case '#':
-                                    _pointfield[i, j] = ' ';
-                                    _wallfield[i, j] = line[jj];
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case 'A':
-                                    _pointfield[i, j] = ' ';
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = line[jj];
-                                    _playerfield[i, j] = ' ';
-                                    break;
-                                case 'o':
-                                    _pointfield[i, j] = ' ';
-                                    _wallfield[i, j] = ' ';
-                                    _ghostfield[i, j] = ' ';
-                                    _playerfield[i, j] = line[jj];
-                                    break;
-                            }
-                            j++;
+                            _field[i, j].TypeOfCell = line[j];
                         }
                     }
                 }
