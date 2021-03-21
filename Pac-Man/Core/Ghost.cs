@@ -12,6 +12,10 @@
         
         public char Direct { get; set; }
         
+        public int TimeToRespawn { get; set; }
+
+        public bool Exist { get; set; }
+
 
         public Ghost(int x, int y)
         {
@@ -19,6 +23,7 @@
             YPosition = y;
             XSpawnPosition = x;
             YSpawnPosition = y;
+            Exist = true;
         }
     }
 }

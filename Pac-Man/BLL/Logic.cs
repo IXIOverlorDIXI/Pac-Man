@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Core;
 using DAL;
 
@@ -18,8 +19,8 @@ namespace BLL
         
         public void Move()
         {
-            if(GameStatus!="GameEnd")PlayerMoving();
-            if(Ghosts.Count!=0&&GameStatus!="GameEnd")GhostMoving();
+            if(GameStatus!="GameEnd"&&Player.PointToWin>0)PlayerMoving();
+            if(Ghosts.Count!=0&&GameStatus!="GameEnd"&&Player.PointToWin>0)GhostMoving();
         }
         
         private void GhostMoving()
@@ -27,90 +28,104 @@ namespace BLL
             Random random = new Random();
             for (int count = 0; count < Ghosts.Count; count++)
             {
-                if (EntityCanNotMove(Ghosts[count])||random.Next(1, 11) == 1)
+                if (Ghosts[count].Exist)
                 {
-                    bool U = false, D = false, R = false, L = false;
-                    byte direct = 0;
-                    if (!IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition - 1))
+                    if (EntityCanNotMove(Ghosts[count]) || random.Next(1, 11) == 1)
                     {
-                        U = true;
-                        direct++;
+                        bool U = false, D = false, R = false, L = false;
+                        byte direct = 0;
+                        if (!IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition - 1))
+                        {
+                            U = true;
+                            direct++;
+                        }
+
+                        if (!IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition + 1))
+                        {
+                            D = true;
+                            direct++;
+                        }
+
+                        if (!IsWall(Ghosts[count].XPosition - 1, Ghosts[count].YPosition))
+                        {
+                            L = true;
+                            direct++;
+                        }
+
+                        if (!IsWall(Ghosts[count].XPosition + 1, Ghosts[count].YPosition))
+                        {
+                            R = true;
+                            direct++;
+                        }
+
+                        if (direct != 0)
+                        {
+                            int chose = random.Next(1, direct + 1);
+                            int ccount = 0;
+                            if (U)
+                            {
+                                ccount++;
+                                if (ccount == chose) Ghosts[count].Direct = 'U';
+                            }
+
+                            if (D)
+                            {
+                                ccount++;
+                                if (ccount == chose) Ghosts[count].Direct = 'D';
+                            }
+
+                            if (R)
+                            {
+                                ccount++;
+                                if (ccount == chose) Ghosts[count].Direct = 'R';
+                            }
+
+                            if (L)
+                            {
+                                ccount++;
+                                if (ccount == chose) Ghosts[count].Direct = 'L';
+                            }
+
+                            MoveByDirection(count, Ghosts[count]);
+                        }
+                    }
+                    else
+                    {
+                        MoveByDirection(count, Ghosts[count]);
                     }
 
-                    if (!IsWall(Ghosts[count].XPosition, Ghosts[count].YPosition + 1))
+                    if (Player.XPosition == Ghosts[count].XPosition && Player.YPosition == Ghosts[count].YPosition)
                     {
-                        D = true;
-                        direct++;
-                    }
-
-                    if (!IsWall(Ghosts[count].XPosition - 1, Ghosts[count].YPosition))
-                    {
-                        L = true;
-                        direct++;
-                    }
-
-                    if (!IsWall(Ghosts[count].XPosition + 1, Ghosts[count].YPosition))
-                    {
-                        R = true;
-                        direct++;
-                    }
-
-                    if (direct != 0)
-                    {
-                        int chose = random.Next(1, direct+1);
-                        int ccount = 0;
-                        if (U)
+                        if (Player.Status)
                         {
-                            ccount++;
-                            if (ccount == chose) Ghosts[count].Direct = 'U';
+                            List<int> indexes = SearchGhost(Player.XPosition, Player.YPosition);
+                            for (int x = 0; x < indexes.Count; x++)
+                            {
+                                Ghosts[indexes[x]].Exist = false;
+                                Ghosts[indexes[x]].Direct = ' ';
+                                Ghosts[indexes[x]].TimeToRespawn = 10;
+                                Ghosts[indexes[x]].YPosition = Ghosts[indexes[x]].YSpawnPosition;
+                                Ghosts[indexes[x]].XPosition = Ghosts[indexes[x]].XSpawnPosition;
+                                Player.Score += 200;
+                            }
                         }
-                        if (D)
+                        else
                         {
-                            ccount++;
-                            if (ccount == chose) Ghosts[count].Direct = 'D';
+                            Player.Life--;
+                            if (Player.Life == 0) GameStatus = "GameEnd";
+                            {
+                                Player.XPosition = Player.XSpawnPosition;
+                                Player.YPosition = Player.YSpawnPosition;
+                                Player.Direct = ' ';
+                                Thread.Sleep(200);
+                            }
                         }
-                        if (R)
-                        {
-                            ccount++;
-                            if (ccount == chose) Ghosts[count].Direct = 'R';
-                        }
-                        if (L)
-                        {
-                            ccount++;
-                            if (ccount == chose) Ghosts[count].Direct = 'L';
-                        }
-                        MoveByDirection(count,Ghosts[count]);
                     }
                 }
                 else
                 {
-                    MoveByDirection(count,Ghosts[count]);
-                }
-
-                if (Player.XPosition==Ghosts[count].XPosition&&Player.YPosition==Ghosts[count].YPosition)
-                {
-                    if (Player.Status)
-                    {
-                        List<int> indexes = SearchGhost(Player.XPosition, Player.YPosition);
-                        indexes.Reverse();
-                        foreach (var index in indexes)
-                        {
-                            Ghosts.RemoveAt(index);
-                            Player.Score += 200;
-                        }
-                        
-
-                    }
-                    else
-                    {
-                        Player.Life--;
-                        /*if(Player.Life == 0 )*/
-                        GameStatus = "GameEnd";
-                        //else
-                        {
-
-                        }
-                    }
+                    Ghosts[count].TimeToRespawn--;
+                    if (Ghosts[count].TimeToRespawn == 0) Ghosts[count].Exist = true;
                 }
             }
         }
@@ -122,6 +137,7 @@ namespace BLL
                 MoveByDirection(Player);
                 if (Level._field[Player.YPosition, Player.XPosition].TypeOfCell == '.')
                 {
+                    Player.PointToWin--;
                     Player.Score+=10;
                     Level._field[Player.YPosition, Player.XPosition].TypeOfCell = ' ';
                 }
@@ -130,25 +146,36 @@ namespace BLL
                     if (Player.Status)
                     {
                         List<int> indexes = SearchGhost(Player.XPosition, Player.YPosition);
-                        indexes.Reverse();
-                        foreach (var index in indexes)
+                        for (int x = 0; x < indexes.Count; x++)
                         {
-                            Ghosts.RemoveAt(index);
+                            Ghosts[indexes[x]].Exist = false;
+                            Ghosts[indexes[x]].TimeToRespawn = 10;
+                            Ghosts[indexes[x]].YPosition = Ghosts[indexes[x]].YSpawnPosition;
+                            Ghosts[indexes[x]].XPosition = Ghosts[indexes[x]].XSpawnPosition;
                             Player.Score += 200;
                         }
                     }
                     else
                     {
                         Player.Life--;
-                        /*if(Player.Life == 0 )*/ GameStatus = "GameEnd";
-                        //else
+                        if(Player.Life == 0 ) GameStatus = "GameEnd";
                         {
+                            for (int x = 0; x < Ghosts.Count; x++)
+                            {
+                                Ghosts[x].YPosition = Ghosts[x].YSpawnPosition;
+                                Ghosts[x].XPosition = Ghosts[x].XSpawnPosition;
+                                Player.Score += 200;
+                            }
+                            Player.XPosition = Player.XSpawnPosition;
+                            Player.YPosition = Player.YSpawnPosition;
                             
+                            Thread.Sleep(200);
                         }
                     }
                 } 
                 if (Level._field[Player.YPosition, Player.XPosition].TypeOfCell == '@' && GameStatus != "GameEnd")
                 {
+                    Player.PointToWin--;
                     Level._field[Player.YPosition, Player.XPosition].TypeOfCell = ' ';
                     Player.Score += 50;
                     Player.Status = true;
@@ -255,6 +282,7 @@ namespace BLL
             Player.Life = Level.LifeCount;
             Player.Status = false;
             Player.Score = 0;
+            Player.PointToWin=0;
             GameStatus = "InGame";
             int count = 0;
             for (int i = 0; i < Level._field.GetLength(0); i++)
@@ -263,6 +291,12 @@ namespace BLL
                 {
                     switch (Level._field[i,j].TypeOfCell)
                     {
+                        case '.':
+                            Player.PointToWin++;
+                            break;
+                        case '@':
+                            Player.PointToWin++;
+                            break;
                         case 'o':
                             Player.XPosition = j;
                             Player.YPosition = i;
@@ -301,13 +335,13 @@ namespace BLL
         
         public void Pause()
         {
-            
         }
         
         private bool IsWall(int x, int y)
         {
             return Level._field[y, x].TypeOfCell == '#';
         }
+        
         private bool IsGhost(int x, int y)
         {
             foreach (var ghost in Ghosts)
@@ -316,6 +350,7 @@ namespace BLL
             }
             return false;
         }
+        
         public char[,] Complex()
         {
             char[,] Map = new char[Level._field.GetLength(0), Level._field.GetLength(1)];
@@ -329,8 +364,11 @@ namespace BLL
             }
             foreach (var ghost in Ghosts)
             {
-                if (Player.Status) Map[ghost.YPosition, ghost.XPosition] = 'V';
-                else Map[ghost.YPosition, ghost.XPosition] = 'A';
+                if (ghost.Exist)
+                {
+                    if (Player.Status) Map[ghost.YPosition, ghost.XPosition] = 'V';
+                    else Map[ghost.YPosition, ghost.XPosition] = 'A';
+                }
             }
             Map[Player.YPosition, Player.XPosition] = 'o';
             return Map;
@@ -345,6 +383,12 @@ namespace BLL
                     arr.Add(i);
             }
             return arr;
+        }
+
+        public int FileCount()
+        {
+            var obj = new Field();
+            return obj.FileCount();
         }
     }
 }

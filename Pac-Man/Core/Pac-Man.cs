@@ -4,6 +4,7 @@
     {
         public byte Life { get; set; }
         
+        public int PointToWin { get; set; }
         public int Score { get; set; }
         
         public bool Status { get; set; }

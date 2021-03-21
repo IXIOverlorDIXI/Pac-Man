@@ -9,23 +9,18 @@ namespace DAL
 
         private string sequritypath = ".\\Levels\\Level0.txt";
 
-        public FieldStruct [,] _field { get; set; }
-        
+        public FieldStruct[,] _field { get; set; }
+
         public byte LifeCount { get; set; }
-        
-        
+
+        public Field()
+        {
+            
+        }
         public Field(int number)
         {
-            switch (number)
-            {
-                case 1:
-                    _path = $".\\Levels\\Level{number}.txt";
-                    break;
-                default:
-                    _path = sequritypath;
-                    break;
-            }
-            
+
+            _path = $".\\Levels\\Level{number}.txt"; 
             ReadLevelFile();
         }
 
@@ -51,6 +46,7 @@ namespace DAL
                         _field[i, j].TypeOfCell = line[j];
                     }
                 }
+
                 FileWithLevel.Close();
             }
             catch (Exception e)
@@ -77,8 +73,15 @@ namespace DAL
                         }
                     }
                 }
+
                 FileWithLevel.Close();
             }
+        }
+
+
+        public int FileCount()
+        {
+            return Directory.GetFiles(".\\Levels").Length;
         }
     }
 }
