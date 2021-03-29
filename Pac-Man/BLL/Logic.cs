@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Core;
 using DAL;
 
@@ -14,9 +13,14 @@ namespace BLL
         private List<Ghost> Ghosts { get; set; }
 
         public Pac_Man Player = new Pac_Man();
-        
+
+        public bool ctrl = true;
         public Field Level { get; set; }
-        
+
+        private string KonamiCode = "UUDDLRLR";
+
+        private string HistoryCode = "";
+
         public void Move()
         {
             if(GameStatus!="GameEnd"&&Player.PointToWin>0)PlayerMoving();
@@ -30,7 +34,7 @@ namespace BLL
             {
                 if (Ghosts[count].Exist)
                 {
-                    if (EntityCanNotMove(Ghosts[count]) || random.Next(1, 11) == 1)
+                    if (EntityCanNotMove(Ghosts[count]) || random.Next(1, 11) == 1||Player.XPosition == Ghosts[count].XPosition||Player.YPosition == Ghosts[count].YPosition)
                     {
                         bool U = false, D = false, R = false, L = false;
                         byte direct = 0;
@@ -58,32 +62,349 @@ namespace BLL
                             direct++;
                         }
 
-                        if (direct != 0)
+                        if (!EntityCanNotMoveAtAll(Ghosts[count]))
                         {
-                            int chose = random.Next(1, direct + 1);
-                            int ccount = 0;
-                            if (U)
+                            bool choose = true;
+                            if (Player.Status)
                             {
-                                ccount++;
-                                if (ccount == chose) Ghosts[count].Direct = 'U';
+                                if (Player.XPosition == Ghosts[count].XPosition||Player.YPosition == Ghosts[count].YPosition)
+                                {
+                                    if (Player.YPosition == Ghosts[count].YPosition)
+                                    {
+                                        if (Player.XPosition < Ghosts[count].XPosition)
+                                        {
+                                            if ((Level._field.GetLength(1) + Player.XPosition - Ghosts[count].XPosition) 
+                                                > Math.Abs(Player.XPosition - Ghosts[count].XPosition))
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                                {
+                                                    Ghosts[count].Direct = 'R';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'L';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                                {
+                                                    Ghosts[count].Direct = 'L';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'R';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if ((Level._field.GetLength(1) - Player.XPosition + Ghosts[count].XPosition) 
+                                                < Math.Abs(Player.XPosition - Ghosts[count].XPosition))
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                                {
+                                                    Ghosts[count].Direct = 'R';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'L';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                                {
+                                                    Ghosts[count].Direct = 'L';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'R';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Player.YPosition < Ghosts[count].YPosition)
+                                        {
+                                            if ((Level._field.GetLength(0) + Player.YPosition - Ghosts[count].YPosition) 
+                                                > Math.Abs(Player.YPosition - Ghosts[count].YPosition))
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                                {
+                                                    Ghosts[count].Direct = 'D';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'U';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                                {
+                                                    Ghosts[count].Direct = 'U';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'D';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if ((Level._field.GetLength(0) - Player.YPosition + Ghosts[count].YPosition) 
+                                                < Math.Abs(Player.YPosition - Ghosts[count].YPosition))
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                                {
+                                                    Ghosts[count].Direct = 'D';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'U';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                                {
+                                                    Ghosts[count].Direct = 'U';
+                                                    choose = false;
+                                                }
+                                                else
+                                                {
+                                                    if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                                    { 
+                                                        Ghosts[count].Direct = 'D';
+                                                        choose = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-
-                            if (D)
+                            else
                             {
-                                ccount++;
-                                if (ccount == chose) Ghosts[count].Direct = 'D';
+                                if (Player.XPosition == Ghosts[count].XPosition||Player.YPosition == Ghosts[count].YPosition)
+                            {
+                                if (Player.YPosition == Ghosts[count].YPosition)
+                                {
+                                    if (Player.XPosition < Ghosts[count].XPosition)
+                                    {
+                                        if ((Level._field.GetLength(1) + Player.XPosition - Ghosts[count].XPosition) 
+                                            < Math.Abs(Player.XPosition - Ghosts[count].XPosition))
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                            {
+                                                Ghosts[count].Direct = 'R';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                                { 
+                                                    Ghosts[count].Direct = 'L';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                            {
+                                                Ghosts[count].Direct = 'L';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                                { 
+                                                    Ghosts[count].Direct = 'R';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if ((Level._field.GetLength(1) - Player.XPosition + Ghosts[count].XPosition) 
+                                            > Math.Abs(Player.XPosition - Ghosts[count].XPosition))
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                            {
+                                                Ghosts[count].Direct = 'R';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                                { 
+                                                    Ghosts[count].Direct = 'L';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'L'))
+                                            {
+                                                Ghosts[count].Direct = 'L';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'R'))
+                                                { 
+                                                    Ghosts[count].Direct = 'R';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (Player.YPosition < Ghosts[count].YPosition)
+                                    {
+                                        if ((Level._field.GetLength(0) + Player.YPosition - Ghosts[count].YPosition) 
+                                            < Math.Abs(Player.YPosition - Ghosts[count].YPosition))
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                            {
+                                                Ghosts[count].Direct = 'D';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                                { 
+                                                    Ghosts[count].Direct = 'U';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                            {
+                                                Ghosts[count].Direct = 'U';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                                { 
+                                                    Ghosts[count].Direct = 'D';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if ((Level._field.GetLength(0) - Player.YPosition + Ghosts[count].YPosition) 
+                                            > Math.Abs(Player.YPosition - Ghosts[count].YPosition))
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                            {
+                                                Ghosts[count].Direct = 'D';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                                { 
+                                                    Ghosts[count].Direct = 'U';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'U'))
+                                            {
+                                                Ghosts[count].Direct = 'U';
+                                                choose = false;
+                                            }
+                                            else
+                                            {
+                                                if(!WallOnWayCheck(Ghosts[count].XPosition, Ghosts[count].YPosition, 'D'))
+                                                { 
+                                                    Ghosts[count].Direct = 'D';
+                                                    choose = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-
-                            if (R)
-                            {
-                                ccount++;
-                                if (ccount == chose) Ghosts[count].Direct = 'R';
+                                
                             }
-
-                            if (L)
+                            if(choose)
                             {
-                                ccount++;
-                                if (ccount == chose) Ghosts[count].Direct = 'L';
+                                int chose = random.Next(1, direct + 1);
+                                int ccount = 0;
+                                if (U)
+                                {
+                                    ccount++;
+                                    if (ccount == chose) Ghosts[count].Direct = 'U';
+                                }
+
+                                if (D)
+                                {
+                                    ccount++;
+                                    if (ccount == chose) Ghosts[count].Direct = 'D';
+                                }
+
+                                if (R)
+                                {
+                                    ccount++;
+                                    if (ccount == chose) Ghosts[count].Direct = 'R';
+                                }
+
+                                if (L)
+                                {
+                                    ccount++;
+                                    if (ccount == chose) Ghosts[count].Direct = 'L';
+                                }
                             }
 
                             MoveByDirection(count, Ghosts[count]);
@@ -112,12 +433,21 @@ namespace BLL
                         else
                         {
                             Player.Life--;
-                            if (Player.Life == 0) GameStatus = "GameEnd";
+                            if (Player.Life == 0)
                             {
+                                GameStatus = "GameEnd";
+                            }
+                            else 
+                            {
+                                foreach (var ghost in Ghosts)
+                                {
+                                    ghost.XPosition = ghost.XSpawnPosition;
+                                    ghost.YPosition = ghost.YSpawnPosition;
+                                    ghost.Direct = ' ';
+                                }
                                 Player.XPosition = Player.XSpawnPosition;
                                 Player.YPosition = Player.YSpawnPosition;
                                 Player.Direct = ' ';
-                                Thread.Sleep(200);
                             }
                         }
                     }
@@ -128,6 +458,67 @@ namespace BLL
                     if (Ghosts[count].TimeToRespawn == 0) Ghosts[count].Exist = true;
                 }
             }
+        }
+
+        private bool WallOnWayCheck(int x, int y, char d)
+        {
+            switch (d)
+            {
+                case 'R':
+                    for (int i = x + 1; i != x; x++)
+                    {
+                        if(i <= Level._field.GetLength(1))
+                        {
+                            if (IsWall(i, y)) return true;
+                        }
+                        else
+                        {
+                            i = -1;
+                        }
+                    }
+                    break;
+                case 'D':
+                    for (int i = y + 1; i != y; y++)
+                    {
+                        if(i <= Level._field.GetLength(0))
+                        {
+                            if (IsWall(x, i)) return true;
+                        }
+                        else
+                        {
+                            i = -1;
+                        }
+                    }
+                    break;
+                case 'L':
+                    for (int i = x - 1; i != x; x--)
+                    {
+                        if(i >= 0 )
+                        {
+                            if (IsWall(i, y)) return true;
+                        }
+                        else
+                        {
+                            i = Level._field.GetLength(1)+1;
+                        }
+                    }
+                    break;
+                case 'U':
+                    for (int i = y - 1; i != y; y--)
+                    {
+                        if(i >= 0)
+                        {
+                            if (IsWall(x, i)) return true;
+                        }
+                        else
+                        {
+                            i = Level._field.GetLength(0)+1;
+                        }
+                    }
+                    break;
+            }
+
+            return false;
         }
         
         private void PlayerMoving()
@@ -158,18 +549,21 @@ namespace BLL
                     else
                     {
                         Player.Life--;
-                        if(Player.Life == 0 ) GameStatus = "GameEnd";
+                        if (Player.Life == 0)
                         {
-                            for (int x = 0; x < Ghosts.Count; x++)
+                            GameStatus = "GameEnd";
+                        }
+                        else 
+                        {
+                            foreach (var ghost in Ghosts)
                             {
-                                Ghosts[x].YPosition = Ghosts[x].YSpawnPosition;
-                                Ghosts[x].XPosition = Ghosts[x].XSpawnPosition;
-                                Player.Score += 200;
+                                ghost.XPosition = ghost.XSpawnPosition;
+                                ghost.YPosition = ghost.YSpawnPosition;
+                                ghost.Direct = ' ';
                             }
                             Player.XPosition = Player.XSpawnPosition;
                             Player.YPosition = Player.YSpawnPosition;
                             
-                            Thread.Sleep(200);
                         }
                     }
                 } 
@@ -205,8 +599,40 @@ namespace BLL
                     y--;
                     break;
             }
-            Ghosts[count].XPosition = x;
-            Ghosts[count].YPosition = y;
+            if (x < 0)
+            {
+                Ghosts[count].XPosition = Level._field.GetLength(1)-1;
+                Ghosts[count].YPosition = y;
+            }
+            else
+            {
+                if (x == Level._field.GetLength(1))
+                {
+                    Ghosts[count].XPosition = 0;
+                    Ghosts[count].YPosition = y;
+                }
+                else
+                {
+                    if (y < 0)
+                    {
+                        Ghosts[count].YPosition = Level._field.GetLength(0)-1;
+                        Ghosts[count].XPosition = x;
+                    }
+                    else
+                    {
+                        if (y == Level._field.GetLength(0))
+                        {
+                            Ghosts[count].YPosition = 0;
+                            Ghosts[count].XPosition = x;
+                        }
+                        else
+                        {
+                            Ghosts[count].YPosition = y;
+                            Ghosts[count].XPosition = x;
+                        }
+                    }
+                }
+            }
         }
         
         private void MoveByDirection(Pac_Man entity)
@@ -228,8 +654,42 @@ namespace BLL
                     y--;
                     break;
             }
-            Player.XPosition = x;
-            Player.YPosition = y;
+
+            if (x < 0)
+            {
+                Player.XPosition = Level._field.GetLength(1)-1;
+                Player.YPosition = y;
+            }
+            else
+            {
+                if (x == Level._field.GetLength(1))
+                {
+                    Player.XPosition = 0;
+                    Player.YPosition = y;
+                }
+                else
+                {
+                    if (y < 0)
+                    {
+                        Player.YPosition = Level._field.GetLength(0)-1;
+                        Player.XPosition = x;
+                    }
+                    else
+                    {
+                        if (y == Level._field.GetLength(0))
+                        {
+                            Player.YPosition = 0;
+                            Player.XPosition = x;
+                        }
+                        else
+                        {
+                            Player.YPosition = y;
+                            Player.XPosition = x;
+                        }
+                            
+                    }
+                }
+            }
         }
         
         private bool EntityCanNotMove(Ghost entity)
@@ -251,6 +711,16 @@ namespace BLL
                 return IsWall(entity.XPosition - 1, entity.YPosition);
             }
             return true;
+        }
+        
+        private bool EntityCanNotMoveAtAll(Ghost entity)
+        {
+            byte i = 0;
+            if(IsWall(entity.XPosition, entity.YPosition - 1)) i++;
+            if(IsWall(entity.XPosition + 1, entity.YPosition)) i++;
+            if(IsWall(entity.XPosition, entity.YPosition + 1)) i++;
+            if(IsWall(entity.XPosition - 1, entity.YPosition)) i++;
+            return i==4;
         }
         
         private bool EntityCanNotMove(Pac_Man entity)
@@ -315,21 +785,25 @@ namespace BLL
         
         public void ToLeft()
         {
+            KanamiCode('L');
             Player.Direct = 'L';
         }
         
         public void ToDown()
         {
+            KanamiCode('D');
             Player.Direct = 'D';
         }
         
         public void ToUp()
         {
+            KanamiCode('U');
             Player.Direct = 'U';
         }
         
         public void ToRight()
         {
+            KanamiCode('R');
             Player.Direct = 'R';
         }
         
@@ -339,7 +813,31 @@ namespace BLL
         
         private bool IsWall(int x, int y)
         {
-            return Level._field[y, x].TypeOfCell == '#';
+            if (x >= 0 && x < Level._field.GetLength(1) && y >= 0 && y < Level._field.GetLength(0))
+            {
+                return Level._field[y, x].TypeOfCell == '#';
+            }
+
+            if (x < 0)
+            {
+                return Level._field[y, Level._field.GetLength(1) - 1].
+                    TypeOfCell == '#';
+            }
+            if (y == Level._field.GetLength(0))
+            {
+                return Level._field[0, x].TypeOfCell == '#';
+            }
+            if (x == Level._field.GetLength(1))
+            {
+                return Level._field[y, 0].TypeOfCell == '#';
+            }
+            if (y < 0)
+            {
+                return Level._field[Level._field.GetLength(0) - 1, x].
+                    TypeOfCell == '#';
+            }
+
+            return true;
         }
         
         private bool IsGhost(int x, int y)
@@ -351,26 +849,26 @@ namespace BLL
             return false;
         }
         
-        public char[,] Complex()
+        public FieldStruct[,] Complex()
         {
-            char[,] Map = new char[Level._field.GetLength(0), Level._field.GetLength(1)];
+            FieldStruct[,] Map = new FieldStruct[Level._field.GetLength(0), Level._field.GetLength(1)];
             
             for (int i = 0; i < Level._field.GetLength(0); i++)
             {
                 for (int j = 0; j < Level._field.GetLength(1); j++)
                 {
-                    Map[i, j] = Level._field[i, j].TypeOfCell;
+                    Map[i, j] = Level._field[i, j];
                 }
             }
             foreach (var ghost in Ghosts)
             {
                 if (ghost.Exist)
                 {
-                    if (Player.Status) Map[ghost.YPosition, ghost.XPosition] = 'V';
-                    else Map[ghost.YPosition, ghost.XPosition] = 'A';
+                    if (Player.Status) Map[ghost.YPosition, ghost.XPosition].TypeOfCell = 'V';
+                    else Map[ghost.YPosition, ghost.XPosition].TypeOfCell = 'A';
                 }
             }
-            Map[Player.YPosition, Player.XPosition] = 'o';
+            Map[Player.YPosition, Player.XPosition].TypeOfCell = 'o';
             return Map;
         }
         
@@ -389,6 +887,24 @@ namespace BLL
         {
             var obj = new Field();
             return obj.FileCount();
+        }
+
+        private void KanamiCode(char a)
+        {
+            if (HistoryCode.Length == 8)
+            {
+                HistoryCode = HistoryCode.Remove(0, 1) + a;
+            }
+            else
+            {
+                HistoryCode += a;
+            }
+
+            if (HistoryCode.Equals(KonamiCode))
+            {
+                ctrl = false;
+            }
+            
         }
     }
 }

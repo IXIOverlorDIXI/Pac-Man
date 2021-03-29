@@ -15,8 +15,7 @@
         public int TimeToRespawn { get; set; }
 
         public bool Exist { get; set; }
-
-
+        
         public Ghost(int x, int y)
         {
             XPosition = x;

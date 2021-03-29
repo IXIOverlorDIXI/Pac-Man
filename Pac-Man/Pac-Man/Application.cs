@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using BLL;
+using DAL;
 
 namespace Pac_Man
 {
@@ -9,7 +10,7 @@ namespace Pac_Man
     {
         private Logic _bll = new Logic();
 
-        private char[,] level { get; set; }
+        private FieldStruct[,] level { get; set; }
         
         private string _gameover = string.Concat(
             "\n\n",
@@ -30,6 +31,7 @@ namespace Pac_Man
             "███─████─██─██─█─███─██─██─█─███─█████─────███─███─██─██─██─██─████─█─██\n",
             "███─████────██───███─██─██─█─███───████─█─███───██─██─██─██─██───██─█─██\n",
             "███─████████████████████████████████████████████████████████████████████");
+        
         private string [] _game = new string[7]{
                 "█████████████████████████████████████████████████",
                 "███────███────███────█████─███──███────███─██─███",
@@ -37,16 +39,38 @@ namespace Pac_Man
                 "███────███────███─████████─█─█──███────███─█──███",
                 "███─██████─██─███─██─█████─███──███─██─███─██─███",
                 "███─██████─██─███────█████─███──███─██─███─██─███",
-                "█████████████████████████████████████████████████" };
-
+                "█████████████████████████████████████████████████"};
+        
+        
+        private string [] _kanami = new string[16]{
+            " _        _______  _        _______  _______ _________",
+            "| \\    /\\(  ___  )( (    /|(  ___  )(       )\\__   __/",
+            "|  \\  / /| (   ) ||  \\  ( || (   ) || () () |   ) (",
+            "|  (_/ / | (___) ||   \\ | || (___) || || || |   | |",
+            "|   _ (  |  ___  || (\\ \\) ||  ___  || |(_)| |   | |",
+            "|  ( \\ \\ | (   ) || | \\   || (   ) || |   | |   | |",
+            "|  /  \\ \\| )   ( || )  \\  || )   ( || )   ( |___) (___",
+            "|_/    \\/|/     \\||/    )_)|/     \\||/     \\|\\_______/",
+            " _______  _______  ______   _______       ______",
+            "(  ____ \\(  ___  )(  __  \\ (  ____ \\     / ___  \\ ",
+            "| (    \\/| (   ) || (  \\  )| (    \\/   _ \\/   \\  \\",
+            "| |      | |   | || |   ) || (__      (_)   ___) /",
+            "| |      | |   | || |   | ||  __)          (___ ( ",
+            "| |      | |   | || |   ) || (         _       ) \\",
+            "| (____/\\| (___) || (__/  )| (____/\\  (_)/\\___/  /",
+            "(_______/(_______)(______/ (_______/     \\______/ "};
+        
         public Application()
         {
+            Thread sound = new Thread(SoundMain);
+            sound.Start();
             MainMenu();
         }
 
         private void MainMenu()
         {
-            Animation();
+            Console.CursorVisible = false;
+            StartAnimation();
             Console.ForegroundColor = ConsoleColor.Black;
             Console.BackgroundColor = ConsoleColor.White;
             bool check = true;
@@ -110,10 +134,64 @@ namespace Pac_Man
                         break;
                 }
             }
+            
             Thread.Sleep(2000);
         }
 
-        private void Animation()
+        private void SoundMain()
+        {
+            while (true)
+            {
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(932,150);
+                Thread.Sleep(150);
+                Console.Beep(1047,150);
+                Thread.Sleep(150);
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(699,150);
+                Thread.Sleep(150);
+                Console.Beep(740,150);
+                Thread.Sleep(150);
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(932,150);
+                Thread.Sleep(150);
+                Console.Beep(1047,150);
+                Thread.Sleep(150);
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(784,150);
+                Thread.Sleep(300);
+                Console.Beep(699,150);
+                Thread.Sleep(150);
+                Console.Beep(740,150);
+                Thread.Sleep(150);
+                Console.Beep(932,150);
+                Console.Beep(784,150);
+                Console.Beep(587,1200);
+                Thread.Sleep(75);
+                Console.Beep(932,150);
+                Console.Beep(784,150);
+                Console.Beep(554,1200);
+                Thread.Sleep(75);
+                Console.Beep(932,150);
+                Console.Beep(784,150);
+                Console.Beep(523,1200);
+                Thread.Sleep(150);
+                Console.Beep(466,150);
+                Console.Beep(523, 150);
+            }
+        }
+
+        public void StartAnimation()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.Black;
@@ -129,12 +207,40 @@ namespace Pac_Man
             Thread.Sleep(1000);
         }
 
+        public void KanamiAnimation()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            for (int l = 0; l <= _kanami[0].Length - 1; l++)
+            {
+                Console.Clear();
+                for (int i = 0; i < _kanami.Length; i++)
+                {
+
+                    var line = "";
+                    for (int j = 0; j <= l; j++)
+                    {
+                        if (_kanami[i].Length > _kanami[0].Length - 1 - j)
+                        {
+                            line=_kanami[i][_kanami[0].Length - 1 - j]+ line;
+                        }
+                        else
+                        {
+                            line=" "+ line;
+                        }
+                    }
+                    Console.WriteLine(line);
+                }
+                Thread.Sleep(300);
+            }
+            Thread.Sleep(10000);
+        }
+
         private void Tutorial()
         {
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
-            Console.WriteLine("Welcome to the PacMan tutorial!\nThe goal of the game is to collect all the coins \"");
+            Console.Write("Welcome to the PacMan tutorial!\nThe goal of the game is to collect all the coins \"");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(".");
             Console.ForegroundColor = ConsoleColor.Gray;
@@ -168,7 +274,7 @@ namespace Pac_Man
             Console.Clear();
             Console.WriteLine(String.Concat(
                 "Author: Андрей Долгий, студент Харьковского национального университетат радиоэлектроники, группа: ПЗПИ-20-4\n",
-                "Version: Beta 1.0.0\n",
+                "Version: Beta 1.1.1\n",
                 "Project Name: Pac-Man\n",
                 "Support: andrii.dolhyi@nure.ua"));
             Console.WriteLine("Press any key to continue:");
@@ -177,16 +283,26 @@ namespace Pac_Man
 
         private void Run()
         {
+            Console.Clear();
             Thread t = new Thread(Control);
             t.Start();
             do
             {
-                Demo();
-                Thread.Sleep(500);
-                _bll.Move();
+                if (_bll.ctrl)
+                {
+                    Demo();
+                    Thread.Sleep(500);
+                    _bll.Move();
+                }
+                else
+                {
+                    KanamiAnimation();
+                    _bll.ctrl = true;
+                }
             } 
             while (_bll.GameStatus != "GameEnd"&&_bll.Player.PointToWin>0);
             Console.Clear();
+            Console.WriteLine($"Your score: {_bll.Player.Score}");
             if(_bll.Player.Life<=0)Console.WriteLine(_gameover);
             else Console.WriteLine(_win);
             Console.WriteLine("Press any key to exit.");
@@ -196,7 +312,9 @@ namespace Pac_Man
 
         private void Demo()
         {
+            
             Console.Clear();
+            
             Console.ForegroundColor = ConsoleColor.Black;
             Console.BackgroundColor = ConsoleColor.White;
 
@@ -214,28 +332,8 @@ namespace Pac_Man
                 Console.WriteLine("\t");
                 for (int j = 0; j < level.GetLength(1); j++)
                 {
-                    switch (level[i, j])
-                    {
-                        case '.':
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            break;
-                        case '@':
-                            Console.ForegroundColor = ConsoleColor.Magenta;
-                            break;
-                        case 'o':
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            break;
-                        case 'A':
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            break;
-                        case 'V':
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            break;
-                        case '#':
-                            Console.ForegroundColor = ConsoleColor.White;
-                            break;
-                    }
-                    Console.Write($"{level[i,j]} ");
+                    Console.ForegroundColor = level[i, j].ColorOfCell;
+                    Console.Write($"{level[i,j].TypeOfCell} ");
                 }
             }
         }
@@ -244,36 +342,39 @@ namespace Pac_Man
         {
             while (true)
             {
-                switch (Console.ReadKey().Key)
+                if(_bll.ctrl)
                 {
-                    case ConsoleKey.A:
-                        _bll.ToLeft();
-                        break;
-                    case ConsoleKey.D:
-                        _bll.ToRight();
-                        break;
-                    case ConsoleKey.S:
-                        _bll.ToDown();
-                        break;
-                    case ConsoleKey.W:
-                        _bll.ToUp();
-                        break;
-                    case ConsoleKey.P:
-                        Process.GetCurrentProcess().Kill();
-                        //_bll.Pause();
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        _bll.ToLeft();
-                        break;
-                    case ConsoleKey.RightArrow:
-                        _bll.ToRight();
-                        break;
-                    case ConsoleKey.UpArrow:
-                        _bll.ToUp();
-                        break;
-                    case ConsoleKey.DownArrow:
-                        _bll.ToDown();
-                        break;
+                    switch (Console.ReadKey().Key)
+                    {
+                        case ConsoleKey.A:
+                            _bll.ToLeft();
+                            break;
+                        case ConsoleKey.D:
+                            _bll.ToRight();
+                            break;
+                        case ConsoleKey.S:
+                            _bll.ToDown();
+                            break;
+                        case ConsoleKey.W:
+                            _bll.ToUp();
+                            break;
+                        case ConsoleKey.P:
+                            Process.GetCurrentProcess().Kill();
+                            //_bll.Pause();
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            _bll.ToLeft();
+                            break;
+                        case ConsoleKey.RightArrow:
+                            _bll.ToRight();
+                            break;
+                        case ConsoleKey.UpArrow:
+                            _bll.ToUp();
+                            break;
+                        case ConsoleKey.DownArrow:
+                            _bll.ToDown();
+                            break;
+                    }
                 }
             }
         }

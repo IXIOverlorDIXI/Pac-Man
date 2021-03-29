@@ -21,3 +21,4 @@ C:\Users\Omen\Documents\Pac-Man\Pac-Man\Pac-Man\obj\Debug\net5.0\Pac-Man.dll
 C:\Users\Omen\Documents\Pac-Man\Pac-Man\Pac-Man\obj\Debug\net5.0\ref\Pac-Man.dll
 C:\Users\Omen\Documents\Pac-Man\Pac-Man\Pac-Man\obj\Debug\net5.0\Pac-Man.pdb
 C:\Users\Omen\Documents\Pac-Man\Pac-Man\Pac-Man\obj\Debug\net5.0\Pac-Man.genruntimeconfig.cache
+C:\Users\Omen\Documents\Pac-Man\Pac-Man\Pac-Man\bin\Debug\net5.0\System.Windows.Forms.DataVisualization.dll

@@ -2,6 +2,18 @@
   "version": 3,
   "targets": {
     "net5.0": {
+      "System.Windows.Forms.DataVisualization/1.0.0-prerelease.20110.1": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp3.0/System.Windows.Forms.DataVisualization.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/System.Windows.Forms.DataVisualization.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.NETCore.App"
+        ]
+      },
       "BLL/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v5.0",
@@ -42,6 +54,22 @@
     }
   },
   "libraries": {
+    "System.Windows.Forms.DataVisualization/1.0.0-prerelease.20110.1": {
+      "sha512": "1EdLFl/I5QobO4shpqUNslDGWTeRbpt3pLMSkiLQYzdWBDqf44/8TM5hXMtkA8ktHU80aVZYVEuxr8vJqcB1Ig==",
+      "type": "package",
+      "path": "system.windows.forms.datavisualization/1.0.0-prerelease.20110.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netcoreapp3.0/System.Windows.Forms.DataVisualization.dll",
+        "lib/netcoreapp3.0/System.Windows.Forms.DataVisualization.pdb",
+        "ref/netcoreapp3.0/System.Windows.Forms.DataVisualization.dll",
+        "system.windows.forms.datavisualization.1.0.0-prerelease.20110.1.nupkg.sha512",
+        "system.windows.forms.datavisualization.nuspec"
+      ]
+    },
     "BLL/1.0.0": {
       "type": "project",
       "path": "../BLL/BLL.csproj",
@@ -61,7 +89,8 @@
   "projectFileDependencyGroups": {
     "net5.0": [
       "BLL >= 1.0.0",
-      "Core >= 1.0.0"
+      "Core >= 1.0.0",
+      "System.Windows.Forms.DataVisualization >= 1.0.0-prerelease.20110.1"
     ]
   },
   "packageFolders": {
@@ -109,6 +138,12 @@
     "frameworks": {
       "net5.0": {
         "targetAlias": "net5.0",
+        "dependencies": {
+          "System.Windows.Forms.DataVisualization": {
+            "target": "Package",
+            "version": "[1.0.0-prerelease.20110.1, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",
